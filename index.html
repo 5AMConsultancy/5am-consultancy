@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5AM Consultancy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: auto; }
+
+:root {
+  --bg:          #080808;
+  --clock-body:  #243360;
+  --clock-inner: #14203f;
+  --card-top:    #72788c;
+  --card-bot:    #62687c;
+  --card-tab:    #555c6e;
+  --digit:       #f0f0f4;
+  --card-h:      96px;
+  --half-h:      48px;
+  --white:       #ffffff;
+  --light-gray:  #d8d4cc;
+  --mid-gray:    #888888;
+  --border:      rgba(255,255,255,0.10);
+  --font:        'Fraunces', Georgia, 'Times New Roman', serif;
+}
+
+body { background: var(--bg); overflow-x: hidden; font-family: var(--font); }
+a { color: inherit; text-decoration: none; }
+
+/* ════════════════════════════════════════
+   CLOCK INTRO
+════════════════════════════════════════ */
+#scroll-zone { position: relative; height: 500vh; }
+
+#clock-stage {
+  position: sticky; top: 0; height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  overflow: hidden; background: var(--bg);
+}
+
+#clock {
+  position: relative; background: var(--clock-body);
+  border-radius: 12px; padding: 22px 26px 26px;
+  box-shadow:
+    0 0 0 2px rgba(255,255,255,.07),
+    0 0 0 4px rgba(0,0,0,.35),
+    0 26px 55px rgba(0,0,0,.8),
+    inset 0 1px 0 rgba(255,255,255,.12),
+    inset 0 -2px 6px rgba(0,0,0,.35);
+}
+
+.bells {
+  position: absolute; top: -26px; left: 0; right: 0;
+  display: flex; justify-content: space-evenly; padding: 0 55px; pointer-events: none;
+}
+.bell {
+  width: 34px; height: 30px;
+  background: radial-gradient(ellipse at 36% 28%, #8a9ab0, #354560);
+  border-radius: 50% 50% 35% 35%;
+  box-shadow: 0 3px 10px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.15);
+  border: 1.5px solid rgba(255,255,255,.06);
+}
+
+.display-area {
+  background: var(--clock-inner); border-radius: 7px; padding: 14px 16px;
+  box-shadow: inset 0 3px 9px rgba(0,0,0,.6), inset 0 1px 3px rgba(0,0,0,.4);
+  display: flex; align-items: center; gap: 8px;
+}
+
+.pair { display: flex; gap: 5px; }
+
+.fc { position: relative; width: 70px; height: var(--card-h); perspective: 280px; flex-shrink: 0; }
+.fc::before {
+  content: ''; position: absolute; top: -7px; left: 50%;
+  transform: translateX(-50%); width: 18px; height: 8px;
+  background: var(--card-tab); border-radius: 3px 3px 0 0; z-index: 8;
+}
+.fc-u, .fc-l { position: absolute; left: 0; right: 0; height: var(--half-h); overflow: hidden; }
+.fc-u { top: 0; background: var(--card-top); border-radius: 5px 5px 0 0; }
+.fc-l { bottom: 0; background: var(--card-bot); border-radius: 0 0 5px 5px; }
+
+.fc-n {
+  width: 100%; height: 96px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font); font-size: 60px; font-weight: 700;
+  color: var(--digit); line-height: 1;
+  user-select: none; pointer-events: none; letter-spacing: -1px;
+  font-variant-numeric: tabular-nums;
+}
+.fc-l .fc-n, .fc-fb .fc-n { transform: translateY(-48px); }
+
+.fc-ft, .fc-fb {
+  position: absolute; left: 0; right: 0; height: 48px;
+  overflow: hidden; z-index: 4; will-change: transform;
+}
+.fc-ft { top: 0; background: var(--card-top); border-radius: 5px 5px 0 0; transform-origin: center bottom; }
+.fc-fb { bottom: 0; background: var(--card-bot); border-radius: 0 0 5px 5px; transform-origin: center top; transform: rotateX(90deg); }
+.fc-ft::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 30%, rgba(0,0,0,.45));
+  opacity: 0; transition: opacity 0.08s; pointer-events: none; border-radius: inherit;
+}
+.fc-ft.folding::after { opacity: 1; }
+
+.fc-div {
+  position: absolute; left: 0; right: 0;
+  top: calc(var(--half-h) - 1px); height: 2px;
+  background: rgba(0,0,0,.75); z-index: 7; pointer-events: none;
+}
+
+.colon { display: flex; flex-direction: column; gap: 14px; padding-bottom: 2px; }
+.colon-dot { width: 7px; height: 7px; background: rgba(240,240,244,.45); border-radius: 50%; }
+
+.am-badge {
+  font-family: var(--font); font-size: 22px; font-weight: 700;
+  color: var(--digit); letter-spacing: 2px; opacity: .7;
+  margin-left: 2px; align-self: center; padding-bottom: 2px;
+}
+
+#scroll-hint {
+  position: absolute; bottom: 38px;
+  display: flex; flex-direction: column; align-items: center; gap: 9px;
+  color: rgba(255,255,255,.5); font-size: 9px; letter-spacing: 5px;
+  font-family: var(--font); font-weight: 300; text-transform: uppercase;
+  transition: opacity .7s ease;
+}
+.hint-arr {
+  width: 15px; height: 15px;
+  border-right: 1.5px solid rgba(255,255,255,.5);
+  border-bottom: 1.5px solid rgba(255,255,255,.5);
+  transform: rotate(45deg); animation: bounce 1.6s ease-in-out infinite;
+}
+@keyframes bounce {
+  0%,100% { transform: rotate(45deg) translate(0,0); opacity:.4; }
+  50%      { transform: rotate(45deg) translate(3px,3px); opacity:.9; }
+}
+@keyframes shake {
+  0%,100% { transform: translate(0,0) rotate(0deg); }
+  8%  { transform: translate(-8px,-2px) rotate(-2deg); }
+  18% { transform: translate(8px,3px) rotate(2deg); }
+  28% { transform: translate(-7px,2px) rotate(-1.4deg); }
+  38% { transform: translate(7px,-2px) rotate(1.4deg); }
+  50% { transform: translate(-5px,2px) rotate(-1deg); }
+  62% { transform: translate(5px,-2px) rotate(1deg); }
+  74% { transform: translate(-3px,1px) rotate(-.5deg); }
+  86% { transform: translate(3px,-1px) rotate(.5deg); }
+}
+
+
+/* ════════════════════════════════════════
+   SITE CONTENT (full overlay, revealed after alarm)
+════════════════════════════════════════ */
+#site-content {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  opacity: 0; pointer-events: none;
+  z-index: 200; overflow-y: auto; overflow-x: hidden;
+  transition: opacity 0.9s ease;
+  -webkit-overflow-scrolling: touch;
+}
+#site-content.visible { opacity: 1; pointer-events: auto; }
+
+/* ── Nav ── */
+#nav {
+  position: sticky; top: 0; z-index: 100;
+  height: 60px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 clamp(20px, 4vw, 64px);
+  border-bottom: 1px solid var(--border);
+  background: rgba(8,8,8,0.92); backdrop-filter: blur(14px);
+}
+.nav-logo {
+  font-family: var(--font); font-weight: 700; font-size: 26px;
+  letter-spacing: 0.04em; color: var(--white);
+}
+.nav-logo em { font-weight: 300; font-style: italic; color: rgba(255,255,255,.45); }
+.nav-links { display: flex; gap: clamp(20px, 3vw, 40px); }
+.nav-links a {
+  font-family: var(--font); font-weight: 300; font-size: 12px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--mid-gray); transition: color 0.2s;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--white); }
+.nav-cta {
+  font-family: var(--font); font-weight: 400; font-size: 12px;
+  letter-spacing: 0.08em; color: var(--bg);
+  background: var(--white); padding: 8px 18px; cursor: pointer;
+  transition: background 0.2s;
+}
+.nav-cta:hover { background: var(--light-gray); }
+.nav-burger {
+  display: none; flex-direction: column; gap: 5px;
+  background: none; border: none; cursor: pointer; padding: 4px;
+}
+.nav-burger span {
+  display: block; width: 22px; height: 1px; background: var(--white);
+  transition: transform 0.3s, opacity 0.3s;
+}
+.nav-burger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.nav-burger.open span:nth-child(2) { opacity: 0; }
+.nav-burger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+@media (max-width: 768px) {
+  .nav-links, .nav-cta { display: none; }
+  .nav-burger { display: flex; }
+}
+
+/* Mobile menu */
+#mobile-menu {
+  display: none; position: absolute; inset: 0; z-index: 150;
+  background: var(--bg);
+  flex-direction: column; align-items: center; justify-content: center; gap: 36px;
+}
+#mobile-menu.open { display: flex; }
+#mobile-menu a {
+  font-family: var(--font); font-weight: 300; font-style: italic;
+  font-size: clamp(2.4rem, 8vw, 4rem); color: var(--white);
+}
+
+/* ── Hero ── */
+#hero {
+  position: relative; min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center; overflow: hidden;
+}
+#hero-canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 0;
+}
+.hero-content {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 0 24px; gap: 0;
+}
+.hero-eyebrow {
+  font-family: var(--font); font-weight: 300; font-size: 10px;
+  letter-spacing: 0.26em; text-transform: uppercase;
+  color: rgba(255,255,255,.65); margin-bottom: 32px;
+}
+.hero-title {
+  font-family: var(--font); font-weight: 700;
+  font-size: clamp(2.4rem, 7.5vw, 8.5rem);
+  line-height: 0.95; letter-spacing: -0.025em; color: var(--white);
+}
+.hero-title em { font-style: italic; font-weight: 300; color: rgba(255,255,255,.35); }
+.hero-sub {
+  font-family: var(--font); font-weight: 300;
+  font-size: clamp(0.75rem, 1.2vw, 1rem);
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(255,255,255,.60); margin-top: 28px; margin-bottom: 36px;
+}
+.hero-explore {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font); font-weight: 300; font-size: 11px;
+  letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,.80);
+  border: 1px solid rgba(255,255,255,0.50); padding: 11px 24px; cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+.hero-explore:hover { color: var(--white); border-color: rgba(255,255,255,0.45); }
+
+/* ── Marquee ── */
+.marquee-wrap {
+  overflow: hidden;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 0; white-space: nowrap;
+}
+.marquee-track {
+  display: inline-flex; gap: 56px;
+  animation: marqueeScroll 26s linear infinite;
+}
+.marquee-item {
+  font-family: var(--font); font-weight: 300;
+  font-size: clamp(0.6rem, 0.85vw, 0.72rem);
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--mid-gray); flex-shrink: 0;
+}
+.mdot { margin: 0 14px; color: rgba(255,255,255,.18); }
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ── Shared sections ── */
+.sec-wrap { border-top: 1px solid var(--border); }
+.sec {
+  max-width: 1320px; margin: 0 auto;
+  padding: clamp(64px, 10vw, 140px) clamp(20px, 5vw, 72px);
+}
+.sec-label {
+  font-family: var(--font); font-weight: 400; font-size: 10px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--mid-gray); margin-bottom: clamp(28px, 4vw, 52px);
+}
+.sec-heading {
+  font-family: var(--font); font-weight: 700;
+  font-size: clamp(2.2rem, 4.8vw, 5.5rem);
+  line-height: 0.96; letter-spacing: -0.025em; color: var(--white);
+  margin-bottom: clamp(40px, 6vw, 80px);
+}
+.sec-heading em { font-style: italic; font-weight: 300; color: rgba(255,255,255,.32); }
+
+/* ── About ── */
+.about-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: clamp(36px, 6vw, 96px); align-items: start;
+}
+.about-lead {
+  font-family: var(--font); font-weight: 300;
+  font-size: clamp(1rem, 1.6vw, 1.4rem);
+  line-height: 1.68; color: var(--light-gray);
+}
+.about-lead p { margin-bottom: 1.5em; }
+.about-lead p:last-child { margin-bottom: 0; }
+.about-blocks { display: flex; flex-direction: column; gap: clamp(24px, 4vw, 44px); }
+.about-block { border-top: 1px solid var(--border); padding-top: clamp(18px, 2.5vw, 28px); }
+.about-block-label {
+  font-family: var(--font); font-weight: 400; font-size: 10px;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--mid-gray); margin-bottom: 14px;
+}
+.about-block-body {
+  font-family: var(--font); font-weight: 300;
+  font-size: clamp(0.88rem, 1.2vw, 1.05rem);
+  line-height: 1.75; color: var(--light-gray);
+}
+@media (max-width: 768px) { .about-grid { grid-template-columns: 1fr; } }
+
+/* ── Services ── */
+.svc-grid { display: grid; grid-template-columns: repeat(3, 1fr); }
+.svc-card {
+  border-top: 1px solid rgba(255,255,255,0.55);
+  padding: clamp(20px, 2.5vw, 32px) clamp(16px, 2vw, 28px) clamp(28px, 3.5vw, 44px) 0;
+  position: relative; transition: background 0.3s;
+}
+.svc-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 1px; background: var(--white);
+  transform: scaleY(0); transform-origin: top;
+  transition: transform 0.35s cubic-bezier(0.16,1,0.3,1);
+}
+.svc-card:hover { background: rgba(255,255,255,0.025); }
+.svc-card:hover::before { transform: scaleY(1); }
+.svc-num {
+  font-family: var(--font); font-weight: 300; font-size: 10px;
+  letter-spacing: 0.1em; color: var(--mid-gray); margin-bottom: 18px;
+}
+.svc-title {
+  font-family: var(--font); font-weight: 700;
+  font-size: clamp(1.1rem, 1.8vw, 1.55rem);
+  color: var(--white); margin-bottom: 14px; line-height: 1.1;
+}
+.svc-desc {
+  font-family: var(--font); font-weight: 300;
+  font-size: clamp(0.82rem, 1vw, 0.94rem);
+  line-height: 1.75; color: var(--light-gray); margin-bottom: 22px;
+}
+.svc-quote { border-left: 1px solid var(--border); padding-left: 14px; margin-top: 18px; }
+.svc-quote p {
+  font-family: var(--font); font-style: italic; font-weight: 300;
+  font-size: clamp(0.78rem, 0.95vw, 0.86rem);
+  color: var(--mid-gray); line-height: 1.62; margin-bottom: 8px;
+}
+.svc-attr {
+  font-family: var(--font); font-weight: 300; font-size: 10px;
+  color: rgba(255,255,255,.3); letter-spacing: 0.05em;
+}
+@media (max-width: 900px) {
+  .svc-grid { grid-template-columns: 1fr; }
+  .svc-card { border-top: none; border-bottom: 1px solid var(--border); padding-right: 0; }
+  .svc-grid .svc-card:first-child { border-top: 1px solid rgba(255,255,255,0.55); }
+}
+
+/* ── Founder ── */
+.founder-card {
+  display: grid; grid-template-columns: 220px 1fr;
+  gap: clamp(32px, 5vw, 72px); align-items: start;
+}
+.founder-photo {
+  aspect-ratio: 1; overflow: hidden;
+  background: #181818; position: relative;
+}
+.founder-photo img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: grayscale(100%); transform: scale(1.06);
+  transition: filter 0.45s ease, transform 0.6s cubic-bezier(0.16,1,0.3,1);
+}
+.founder-photo:hover img { filter: grayscale(0%); transform: scale(1); }
+.founder-initials {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font); font-weight: 700; font-size: 3rem; color: var(--mid-gray);
+}
+.founder-name {
+  font-family: var(--font); font-weight: 700;
+  font-size: clamp(1.8rem, 3.5vw, 3.2rem);
+  color: var(--white); margin-bottom: 8px;
+  letter-spacing: -0.025em; line-height: 1;
+}
+.founder-role {
+  font-family: var(--font); font-weight: 300; font-size: 11px;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--mid-gray); margin-bottom: 26px;
+}
+.founder-bio {
+  font-family: var(--font); font-weight: 300; font-style: italic;
+  font-size: clamp(0.95rem, 1.4vw, 1.2rem);
+  line-height: 1.7; color: var(--light-gray);
+  margin-bottom: 28px; max-width: 500px;
+}
+.founder-links { display: flex; gap: 16px; }
+.founder-links a {
+  font-family: var(--font); font-weight: 300; font-size: 11px;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--mid-gray);
+  border-bottom: 1px solid rgba(255,255,255,0.14); padding-bottom: 2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.founder-links a:hover { color: var(--white); border-color: var(--white); }
+.trusted-by {
+  margin-top: clamp(40px, 6vw, 72px);
+  border-top: 1px solid var(--border);
+  padding-top: clamp(24px, 3.5vw, 40px);
+}
+.trusted-label {
+  font-family: var(--font); font-weight: 300; font-size: 10px;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--mid-gray); margin-bottom: 20px;
+}
+.trusted-list { display: flex; flex-wrap: wrap; gap: clamp(20px, 4vw, 56px); }
+.trusted-name {
+  font-family: var(--font); font-weight: 300; font-style: italic;
+  font-size: clamp(0.95rem, 1.4vw, 1.15rem); color: var(--light-gray);
+}
+@media (max-width: 680px) {
+  .founder-card { grid-template-columns: 1fr; }
+  .founder-photo { max-width: 180px; }
+}
+
+/* ── Work ── */
+.port-sub {
+  font-family: var(--font); font-weight: 300; font-style: italic;
+  font-size: clamp(0.9rem, 1.3vw, 1.1rem); color: var(--mid-gray);
+  margin-top: -44px; margin-bottom: clamp(36px, 5vw, 68px);
+}
+.port-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  border: 1px solid var(--border);
+}
+.port-item {
+  padding: clamp(20px, 2.8vw, 34px) clamp(16px, 2.2vw, 26px);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 8px; transition: background 0.22s;
+}
+.port-item:hover { background: rgba(255,255,255,0.04); }
+.port-item-name {
+  font-family: var(--font); font-weight: 300;
+  font-size: clamp(0.82rem, 1.1vw, 0.96rem); color: var(--light-gray);
+}
+.port-item-tag {
+  font-family: var(--font); font-weight: 300; font-size: 10px;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--mid-gray);
+}
+.port-item.stealth .port-item-name { color: var(--mid-gray); font-style: italic; }
+@media (max-width: 900px) { .port-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .port-grid { grid-template-columns: 1fr; } }
+
+/* ── Contact ── */
+.cta-heading {
+  font-family: var(--font); font-weight: 700;
+  font-size: clamp(2.2rem, 5.5vw, 6rem);
+  line-height: 0.96; letter-spacing: -0.028em; color: var(--white);
+  margin-bottom: clamp(32px, 5vw, 60px);
+}
+.cta-heading em { font-style: italic; font-weight: 300; color: rgba(255,255,255,.32); }
+.cta-body {
+  font-family: var(--font); font-weight: 300;
+  font-size: clamp(0.95rem, 1.4vw, 1.2rem);
+  color: var(--light-gray); line-height: 1.75;
+  margin-bottom: clamp(32px, 4vw, 52px); max-width: 540px;
+}
+.cta-links { display: flex; flex-wrap: wrap; gap: 14px; }
+.cta-link {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font); font-weight: 300; font-size: 12px;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--white);
+  border: 1px solid var(--border); padding: 13px 26px;
+  transition: border-color 0.2s, background 0.2s;
+}
+.cta-link:hover { border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.04); }
+.cta-link span { transition: transform 0.2s; }
+.cta-link:hover span { transform: translateX(4px); }
+
+/* ── Footer ── */
+.footer-bar {
+  border-top: 1px solid var(--border);
+  max-width: 1320px; margin: 0 auto;
+  padding: clamp(24px, 3.5vw, 44px) clamp(20px, 5vw, 72px);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 18px;
+}
+.footer-copy {
+  font-family: var(--font); font-weight: 300; font-size: 10px;
+  letter-spacing: 0.08em; color: var(--mid-gray);
+}
+.footer-links { display: flex; gap: 24px; }
+.footer-links a {
+  font-family: var(--font); font-weight: 300; font-size: 10px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--mid-gray); transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--white); }
+@media (max-width: 600px) { .footer-bar { flex-direction: column; align-items: flex-start; } }
+</style>
+</head>
+<body>
+
+<!-- ════ CLOCK SCROLL ZONE ════ -->
+<div id="scroll-zone">
+  <div id="clock-stage">
+    <div id="clock">
+      <div class="bells"><div class="bell"></div><div class="bell"></div></div>
+      <div class="display-area">
+        <div class="pair">
+          <div class="fc" id="d0">
+            <div class="fc-u"><div class="fc-n" id="d0-su">1</div></div>
+            <div class="fc-l"><div class="fc-n" id="d0-sl">1</div></div>
+            <div class="fc-ft" id="d0-ft"><div class="fc-n" id="d0-fti">1</div></div>
+            <div class="fc-fb" id="d0-fb"><div class="fc-n" id="d0-fbi">1</div></div>
+            <div class="fc-div"></div>
+          </div>
+          <div class="fc" id="d1">
+            <div class="fc-u"><div class="fc-n" id="d1-su">2</div></div>
+            <div class="fc-l"><div class="fc-n" id="d1-sl">2</div></div>
+            <div class="fc-ft" id="d1-ft"><div class="fc-n" id="d1-fti">2</div></div>
+            <div class="fc-fb" id="d1-fb"><div class="fc-n" id="d1-fbi">2</div></div>
+            <div class="fc-div"></div>
+          </div>
+        </div>
+        <div class="colon">
+          <div class="colon-dot" id="cd1"></div>
+          <div class="colon-dot" id="cd2"></div>
+        </div>
+        <div class="pair">
+          <div class="fc" id="d2">
+            <div class="fc-u"><div class="fc-n" id="d2-su">0</div></div>
+            <div class="fc-l"><div class="fc-n" id="d2-sl">0</div></div>
+            <div class="fc-ft" id="d2-ft"><div class="fc-n" id="d2-fti">0</div></div>
+            <div class="fc-fb" id="d2-fb"><div class="fc-n" id="d2-fbi">0</div></div>
+            <div class="fc-div"></div>
+          </div>
+          <div class="fc" id="d3">
+            <div class="fc-u"><div class="fc-n" id="d3-su">0</div></div>
+            <div class="fc-l"><div class="fc-n" id="d3-sl">0</div></div>
+            <div class="fc-ft" id="d3-ft"><div class="fc-n" id="d3-fti">0</div></div>
+            <div class="fc-fb" id="d3-fb"><div class="fc-n" id="d3-fbi">0</div></div>
+            <div class="fc-div"></div>
+          </div>
+        </div>
+        <div class="am-badge">AM</div>
+      </div>
+    </div>
+    <div id="scroll-hint"><span>scroll</span><div class="hint-arr"></div></div>
+  </div>
+</div>
+
+<!-- ════ SITE CONTENT ════ -->
+<div id="site-content">
+
+  <nav id="nav">
+    <a href="#hero" class="nav-logo">5AM <em>Consultancy</em></a>
+    <div class="nav-links">
+      <a href="#about"    data-section="about">About</a>
+      <a href="#services" data-section="services">Services</a>
+      <a href="#founder"  data-section="founder">Founder</a>
+      <a href="#work"     data-section="work">Work</a>
+    </div>
+    <a class="nav-cta" href="mailto:alessandro@5amconsultancy.com?subject=Website%20Enquiry">Get in touch</a>
+    <button class="nav-burger" id="burger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div id="mobile-menu">
+    <a href="#about"    onclick="closeMenu()">About</a>
+    <a href="#services" onclick="closeMenu()">Services</a>
+    <a href="#founder"  onclick="closeMenu()">Founder</a>
+    <a href="#work"     onclick="closeMenu()">Work</a>
+    <a href="mailto:alessandro@5amconsultancy.com?subject=Website%20Enquiry" onclick="closeMenu()">Contact</a>
+  </div>
+
+  <!-- ★ HERO -->
+  <section id="hero">
+    <canvas id="hero-canvas" aria-hidden="true"></canvas>
+    <div class="hero-content">
+      <p class="hero-eyebrow" id="hero-eyebrow">5AM Consultancy — Knysna, South Africa</p>
+      <h1 class="hero-title" id="hero-title">Designed for growth,<br><em>Built for success.</em></h1>
+      <p class="hero-sub" id="hero-sub">Elevating brands · Accelerating growth</p>
+      <a class="hero-explore" id="hero-explore" href="#about">Explore &nbsp;↓</a>
+    </div>
+  </section>
+
+  <!-- Marquee strip -->
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span class="marquee-item">Website Design<span class="mdot">·</span></span>
+      <span class="marquee-item">Brand Scaling<span class="mdot">·</span></span>
+      <span class="marquee-item">Ad Creation<span class="mdot">·</span></span>
+      <span class="marquee-item">Knysna, South Africa<span class="mdot">·</span></span>
+      <span class="marquee-item">5AM Consultancy<span class="mdot">·</span></span>
+      <span class="marquee-item">Elevating Brands<span class="mdot">·</span></span>
+      <span class="marquee-item">Accelerating Growth<span class="mdot">·</span></span>
+      <span class="marquee-item">Website Design<span class="mdot">·</span></span>
+      <span class="marquee-item">Brand Scaling<span class="mdot">·</span></span>
+      <span class="marquee-item">Ad Creation<span class="mdot">·</span></span>
+      <span class="marquee-item">Knysna, South Africa<span class="mdot">·</span></span>
+      <span class="marquee-item">5AM Consultancy<span class="mdot">·</span></span>
+      <span class="marquee-item">Elevating Brands<span class="mdot">·</span></span>
+      <span class="marquee-item">Accelerating Growth<span class="mdot">·</span></span>
+    </div>
+  </div>
+
+  <!-- ★ ABOUT — edit text below -->
+  <div class="sec-wrap">
+    <section class="sec" id="about">
+      <p class="sec-label" id="about-label">Where our name comes from</p>
+      <div class="about-grid">
+        <div class="about-lead" id="about-lead">
+          <p>5AM is the hour before the world wakes up — when the serious work gets done. While competitors hit snooze, we're already mapping your market, building your brand, and shipping the things that move your business forward.</p>
+          <p>The name is both a mindset and a promise: high conviction, early action, and ruthless focus on the one thing that moves the needle fastest for your business.</p>
+        </div>
+        <div class="about-blocks">
+          <div class="about-block" id="about-block1">
+            <p class="about-block-label">What we do</p>
+            <p class="about-block-body">We partner with ambitious businesses to build websites, scale brands, and create ads that convert — delivering work that earns its place in your growth story.</p>
+          </div>
+          <div class="about-block" id="about-block2">
+            <p class="about-block-label">How we do it</p>
+            <p class="about-block-body">Small team, fast execution. We get on a call, agree on the smartest plan that moves the needle fastest, build it together, and track what works — so every investment is pointed in the right direction.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ★ SERVICES — edit titles/descriptions below -->
+  <div class="sec-wrap">
+    <section class="sec" id="services">
+      <h2 class="sec-heading" id="svc-heading">Our <em>Services</em></h2>
+      <div class="svc-grid" id="svc-grid">
+        <div class="svc-card">
+          <p class="svc-num">01</p>
+          <h3 class="svc-title">Website Design</h3>
+          <p class="svc-desc">Fast, custom-built websites — no bloated templates or plugin pile-ups. Clean code that loads instantly and converts visitors into customers.</p>
+          <div class="svc-quote">
+            <p>"A great website is your best salesperson — it never sleeps, never calls in sick, and never misses a lead."</p>
+            <span class="svc-attr">— 5AM Consultancy</span>
+          </div>
+        </div>
+        <div class="svc-card">
+          <p class="svc-num">02</p>
+          <h3 class="svc-title">Brand Scaling</h3>
+          <p class="svc-desc">Positioning, visual identity, and content systems that let a small business look and operate like a market leader — without the market-leader budget.</p>
+          <div class="svc-quote">
+            <p>"Your brand is what people say about you when you're not in the room."</p>
+            <span class="svc-attr">— Jeff Bezos</span>
+          </div>
+        </div>
+        <div class="svc-card">
+          <p class="svc-num">03</p>
+          <h3 class="svc-title">Ad Creation</h3>
+          <p class="svc-desc">Scroll-stopping creative built for the platform it runs on, designed to convert. We know what stops the thumb and what moves the needle.</p>
+          <div class="svc-quote">
+            <p>"Half the money I spend on advertising is wasted; the trouble is I don't know which half."</p>
+            <span class="svc-attr">— John Wanamaker</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ★ FOUNDER — add your photo src below, edit bio -->
+  <div class="sec-wrap">
+    <section class="sec" id="founder">
+      <h2 class="sec-heading" id="founder-heading">The <em>Founder</em></h2>
+      <div class="founder-card" id="founder-card">
+        <div class="founder-photo">
+          <div class="founder-initials">AM</div>
+          <img src="brand_assests/founder.jpg" alt="Alessandro Medeira" loading="lazy" onerror="this.style.display='none'" />
+        </div>
+        <div>
+          <h3 class="founder-name">Alessandro Medeira</h3>
+          <p class="founder-role">Founder &amp; Creative Director</p>
+          <p class="founder-bio">Building businesses with clarity and conviction — from brand identity to digital presence to ads that actually convert. Based in Knysna, working with ambitious people who want to grow.</p>
+          <div class="founder-links">
+            <a href="mailto:alessandro@5amconsultancy.com?subject=Website%20Enquiry">Email ↗</a>
+            <a href="tel:+27692975537">Call ↗</a>
+          </div>
+        </div>
+      </div>
+      <div class="trusted-by" id="trusted-by">
+        <p class="trusted-label">Currently taking on new clients</p>
+        <div class="trusted-list">
+          <span class="trusted-name" style="font-style:italic;color:var(--mid-gray);">Your business could be here — get in touch.</span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ★ WORK — edit client names and tags below -->
+  <div class="sec-wrap">
+    <section class="sec" id="work">
+      <h2 class="sec-heading" id="work-heading">Work</h2>
+      <p class="port-sub" id="work-sub">We build for founders ready to grow.</p>
+      <div class="port-grid" id="port-grid">
+        <div class="port-item stealth" style="grid-column: 1 / -1;">
+          <span class="port-item-name">Upcoming · In Progress</span>
+          <span class="port-item-tag">Client work will appear here as projects launch</span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ★ CONTACT -->
+  <div class="sec-wrap">
+    <section class="sec" id="contact">
+      <h2 class="cta-heading" id="cta-heading">Let's build<br><em>something that grows.</em></h2>
+      <p class="cta-body" id="cta-body">Your competitors aren't awake yet. Let's build something that puts you ahead — and keeps you there. Drop a line, we move fast.</p>
+      <div class="cta-links" id="cta-links">
+        <a class="cta-link" href="mailto:alessandro@5amconsultancy.com?subject=Website%20Enquiry">Email us <span>→</span></a>
+        <a class="cta-link" href="tel:+27692975537">069 297 5537 <span>→</span></a>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <div class="footer-bar" id="footer-bar">
+      <p class="footer-copy">5AM Consultancy ©2026 — Knysna, South Africa</p>
+      <div class="footer-links">
+        <a href="mailto:alessandro@5amconsultancy.com?subject=Website%20Enquiry">Email ↗</a>
+        <a href="tel:+27692975537">Call ↗</a>
+      </div>
+    </div>
+  </footer>
+
+</div><!-- /site-content -->
+
+<script>
+(function () {
+  'use strict';
+
+  const $ = id => document.getElementById(id);
+  const sc = $('site-content');
+
+  /* ════ CLOCK MECHANICS ════ */
+  function toDigits(mins) {
+    const m = Math.min(300, Math.max(0, mins));
+    let h = 12 + Math.floor(m / 60);
+    if (h > 12) h -= 12;
+    const mm = m % 60;
+    return [
+      Math.floor(h / 10).toString(), (h % 10).toString(),
+      Math.floor(mm / 10).toString(), (mm % 10).toString()
+    ];
+  }
+
+  const displayed = ['1','2','0','0'];
+  const pending   = ['1','2','0','0'];
+  const flipping  = [false, false, false, false];
+
+  function doFlip(idx, from, to, secs) {
+    const id = 'd' + idx;
+    const su = $(id+'-su'), sl = $(id+'-sl');
+    const ft = $(id+'-ft'), fb = $(id+'-fb');
+    const fti = $(id+'-fti'), fbi = $(id+'-fbi');
+    const ms = secs * 1000, half = ms * 0.45;
+
+    su.textContent = from; sl.textContent = to;
+    fti.textContent = from; fbi.textContent = to;
+    ft.style.transition = fb.style.transition = 'none';
+    ft.style.transform = 'rotateX(0deg)';
+    fb.style.transform = 'rotateX(90deg)';
+    ft.classList.add('folding');
+    ft.getBoundingClientRect();
+    ft.style.transition = `transform ${secs}s cubic-bezier(0.42,0,1,0.58)`;
+    ft.style.transform = 'rotateX(-90deg)';
+    setTimeout(() => {
+      fb.style.transition = `transform ${secs * 0.78}s cubic-bezier(0,0.42,0.58,1)`;
+      fb.style.transform = 'rotateX(0deg)';
+    }, half);
+    setTimeout(() => { su.textContent = to; }, half + 20);
+    setTimeout(() => {
+      ft.classList.remove('folding');
+      ft.style.transition = fb.style.transition = 'none';
+      ft.style.transform = fb.style.transform = 'rotateX(0deg)';
+      fti.textContent = fbi.textContent = su.textContent = sl.textContent = to;
+    }, ms * 1.25 + 40);
+  }
+
+  function startFlip(idx) {
+    if (flipping[idx] || displayed[idx] === pending[idx]) return;
+    const from = displayed[idx], to = pending[idx], dur = flipDuration();
+    flipping[idx] = true;
+    displayed[idx] = to;
+    doFlip(idx, from, to, dur);
+    setTimeout(() => {
+      flipping[idx] = false;
+      if (pending[idx] !== displayed[idx]) startFlip(idx);
+      else maybeAlarm();
+    }, dur * 1000 * 1.3 + 30);
+  }
+
+  function setDigits(mins) {
+    const next = toDigits(mins);
+    for (let i = 0; i < 4; i++) {
+      if (next[i] !== pending[i]) { pending[i] = next[i]; startFlip(i); }
+    }
+  }
+
+  let velocity = 0, lastScrollY = 0, lastScrollT = 0;
+
+  function sampleVelocity() {
+    const now = Date.now(), dt = now - lastScrollT;
+    if (dt > 0 && dt < 200) velocity = Math.abs(window.scrollY - lastScrollY) / dt;
+    else if (dt >= 200) velocity = 0;
+    lastScrollY = window.scrollY;
+    lastScrollT = now;
+  }
+
+  function flipDuration() {
+    return Math.max(0.10, 0.55 - Math.min(velocity, 2.5) * 0.18);
+  }
+
+  let atEnd = false, alarmFired = false;
+
+  function maybeAlarm() {
+    if (!atEnd || alarmFired) return;
+    const goal = toDigits(300);
+    const allDone = flipping.every(f => !f) && displayed.every((d, i) => d === goal[i]);
+    if (allDone) { alarmFired = true; setTimeout(triggerAlarm, 250); }
+  }
+
+  function triggerAlarm() {
+    const clock = $('clock'), stage = $('clock-stage');
+    $('scroll-hint').style.opacity = '0';
+    clock.style.animation = 'shake 0.065s ease-in-out infinite';
+
+    setTimeout(() => {
+      clock.style.animation = '';
+      const r = clock.getBoundingClientRect();
+      clock.style.cssText += `position:fixed;top:${r.top}px;left:${r.left}px;width:${r.width}px;height:${r.height}px;margin:0;z-index:900;transform-origin:top left;`;
+      stage.style.transition = 'opacity 0.9s ease';
+      stage.style.opacity = '0';
+
+      setTimeout(() => {
+        initSite(); // pre-hide elements before site fades in — prevents flash/double-load
+
+        sc.classList.add('visible');
+        document.body.style.overflow = 'hidden';
+
+        const scale = 72 / r.width;
+        const dx = 24 - r.left, dy = 22 - r.top;
+        clock.style.transition = 'transform 1.15s cubic-bezier(0.4,0,0.15,1)';
+        clock.style.transform = `translate(${dx}px,${dy}px) scale(${scale})`;
+
+        setTimeout(() => {
+          clock.style.transition += ', opacity 0.6s ease';
+          clock.style.opacity = '0';
+        }, 1500);
+      }, 300);
+    }, 2500);
+  }
+
+  window.addEventListener('scroll', () => {
+    if (atEnd) return;
+    sampleVelocity();
+    const zone = $('scroll-zone');
+    const scrollable = zone.scrollHeight - window.innerHeight;
+    const raw = Math.min(1, window.scrollY / scrollable);
+    const mins = Math.min(300, Math.round(raw * raw * 300));
+    setDigits(mins);
+    if (mins >= 300) { atEnd = true; maybeAlarm(); }
+    if (window.scrollY > 70) $('scroll-hint').style.opacity = '0';
+  });
+
+  let colonOn = true;
+  function blinkColon() {
+    colonOn = !colonOn;
+    const o = colonOn ? '.45' : '.1';
+    $('cd1').style.opacity = o;
+    $('cd2').style.opacity = o;
+    setTimeout(blinkColon, velocity > 1 ? 150 : velocity > 0.2 ? 350 : 900);
+  }
+  blinkColon();
+
+  /* ════ MOBILE MENU ════ */
+  const burger = $('burger');
+  let menuOpen = false;
+  burger.addEventListener('click', () => {
+    menuOpen = !menuOpen;
+    burger.classList.toggle('open', menuOpen);
+    $('mobile-menu').classList.toggle('open', menuOpen);
+  });
+  window.closeMenu = function () {
+    menuOpen = false;
+    burger.classList.remove('open');
+    $('mobile-menu').classList.remove('open');
+  };
+
+  /* ════ SITE ANIMATIONS (called after alarm) ════ */
+  function initSite() {
+
+    /* Particle canvas */
+    const canvas = $('hero-canvas'), ctx = canvas.getContext('2d');
+    let W, H, pts;
+    const N = 160, LINK = 220, SPD = 0.32;
+
+    function resizeCv() {
+      W = canvas.width = canvas.offsetWidth;
+      H = canvas.height = canvas.offsetHeight;
+    }
+    function makePts() {
+      pts = Array.from({ length: N }, () => ({
+        x: Math.random() * W, y: Math.random() * H,
+        vx: (Math.random() - 0.5) * SPD, vy: (Math.random() - 0.5) * SPD,
+        r: Math.random() * 1.6 + 0.6, a: Math.random() * 0.30 + 0.18
+      }));
+    }
+    function tick() {
+      ctx.clearRect(0, 0, W, H);
+      for (let i = 0; i < N; i++) {
+        for (let j = i + 1; j < N; j++) {
+          const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          if (d < LINK) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(255,255,255,${(1 - d / LINK) * 0.25})`;
+            ctx.lineWidth = 0.7;
+            ctx.moveTo(pts[i].x, pts[i].y);
+            ctx.lineTo(pts[j].x, pts[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+      pts.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${p.a})`;
+        ctx.fill();
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > W) p.vx *= -1;
+        if (p.y < 0 || p.y > H) p.vy *= -1;
+      });
+      requestAnimationFrame(tick);
+    }
+    resizeCv(); makePts(); tick();
+    window.addEventListener('resize', resizeCv, { passive: true });
+
+    /* Anchor scroll within site-content */
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const target = sc.querySelector(a.getAttribute('href'));
+        if (!target) return;
+        e.preventDefault();
+        sc.scrollTo({ top: target.offsetTop - 60, behavior: 'smooth' });
+        closeMenu();
+      });
+    });
+
+    /* GSAP */
+    if (typeof gsap === 'undefined') { fallback(); return; }
+
+    gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.defaults({ scroller: sc });
+
+    /* Hero entrance */
+    gsap.set(['#hero-eyebrow','#hero-title','#hero-sub','#hero-explore'], { opacity: 0, y: 50 });
+    gsap.timeline({ delay: 0.6 })
+      .to('#hero-eyebrow', { opacity: 1, y: 0, duration: 0.75, ease: 'power3.out' })
+      .to('#hero-title',   { opacity: 1, y: 0, duration: 1.1,  ease: 'power3.out' }, '-=0.5')
+      .to('#hero-sub',     { opacity: 1, y: 0, duration: 0.85, ease: 'power3.out' }, '-=0.6')
+      .to('#hero-explore', { opacity: 1, y: 0, duration: 0.75, ease: 'power3.out' }, '-=0.45');
+
+    /* Hero parallax scrub */
+    gsap.to('#hero-canvas', {
+      y: '20%', ease: 'none',
+      scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true }
+    });
+    gsap.to('.hero-content', {
+      y: '-8%', opacity: 0, ease: 'none',
+      scrollTrigger: { trigger: '#hero', start: 'top top', end: '60% top', scrub: true }
+    });
+
+    /* Reveal helpers */
+    function rv(el, vars = {}, tVars = {}) {
+      gsap.set(el, { opacity: 0, y: vars.y ?? 40 });
+      ScrollTrigger.create({
+        trigger: vars.trigger ?? el, start: tVars.start ?? 'top 88%', once: true,
+        onEnter: () => gsap.to(el, {
+          opacity: 1, y: 0,
+          duration: vars.dur ?? 0.9, ease: vars.ease ?? 'power3.out', delay: vars.delay ?? 0
+        })
+      });
+    }
+    function rvBatch(els, vars = {}) {
+      gsap.set(els, { opacity: 0, y: vars.y ?? 40 });
+      ScrollTrigger.create({
+        trigger: vars.trigger ?? els[0], start: 'top 88%', once: true,
+        onEnter: () => gsap.to(els, {
+          opacity: 1, y: 0,
+          duration: vars.dur ?? 0.9, ease: 'power3.out', stagger: vars.stagger ?? 0.1
+        })
+      });
+    }
+
+    /* About */
+    rv('#about-label', { y: 20, dur: 0.7 });
+    rv('#about-lead', { delay: 0.05 }, { start: 'top 90%' });
+    rv('#about-block1', { y: 30, delay: 0.1 });
+    rv('#about-block2', { y: 30, delay: 0.2 });
+
+    /* Services */
+    rv('#svc-heading', { y: 36, dur: 1.0 });
+    rvBatch(document.querySelectorAll('#svc-grid .svc-card'), { y: 50, dur: 1.0, stagger: 0.12, trigger: $('svc-grid') });
+
+    /* Founder */
+    rv('#founder-heading', { y: 36, dur: 1.0 });
+    rv('#founder-card', { y: 40, dur: 1.0 });
+    rv('#trusted-by', { y: 24, dur: 0.8 }, { start: 'top 90%' });
+
+    /* Work */
+    rv('#work-heading', { y: 36, dur: 1.0 });
+    rv('#work-sub', { y: 20, delay: 0.1 });
+    const portItems = document.querySelectorAll('#port-grid .port-item');
+    gsap.set(portItems, { opacity: 0, y: 30 });
+    ScrollTrigger.create({
+      trigger: $('port-grid'), start: 'top 85%', once: true,
+      onEnter: () => gsap.to(portItems, {
+        opacity: 1, y: 0, duration: 0.7, ease: 'power2.out',
+        stagger: { each: 0.06, from: 'start' }
+      })
+    });
+
+    /* Contact */
+    rv('#cta-heading', { y: 50, dur: 1.15, ease: 'power4.out' });
+    rv('#cta-body',  { y: 30, delay: 0.15 });
+    rv('#cta-links', { y: 24, delay: 0.28 });
+
+    /* Footer */
+    rv('#footer-bar', { y: 20, dur: 0.7 }, { start: 'top 95%' });
+
+    /* Nav active state */
+    const navAs = document.querySelectorAll('.nav-links a[data-section]');
+    new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting)
+          navAs.forEach(a => a.classList.toggle('active', a.dataset.section === e.target.id));
+      });
+    }, { root: sc, rootMargin: '-28% 0px -60% 0px' })
+      .observe(...document.querySelectorAll('#site-content section[id]'));
+
+    /* Fix: observe each section individually */
+    const secObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting)
+          navAs.forEach(a => a.classList.toggle('active', a.dataset.section === e.target.id));
+      });
+    }, { root: sc, rootMargin: '-28% 0px -60% 0px' });
+    document.querySelectorAll('#site-content section[id]').forEach(s => secObs.observe(s));
+  }
+
+  /* Fallback without GSAP */
+  function fallback() {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'none';
+          io.unobserve(e.target);
+        }
+      });
+    }, { root: sc, threshold: 0.1 });
+
+    [
+      '#about-label','#about-lead','#about-block1','#about-block2',
+      '#svc-heading', ...document.querySelectorAll('.svc-card'),
+      '#founder-heading','#founder-card','#trusted-by',
+      '#work-heading','#work-sub', ...document.querySelectorAll('.port-item'),
+      '#cta-heading','#cta-body','#cta-links','#footer-bar'
+    ].forEach(el => {
+      const node = typeof el === 'string' ? sc.querySelector(el) : el;
+      if (!node) return;
+      node.style.cssText += 'opacity:0;transform:translateY(40px);transition:opacity 0.85s ease,transform 0.85s ease;';
+      io.observe(node);
+    });
+
+    gsap && gsap.set(['#hero-eyebrow','#hero-title','#hero-sub','#hero-explore'], { opacity: 0, y: 40 });
+    setTimeout(() => {
+      ['#hero-eyebrow','#hero-title','#hero-sub','#hero-explore'].forEach((id, i) => {
+        const el = sc.querySelector(id);
+        if (!el) return;
+        el.style.transition = `opacity 1s ease ${i * 0.18}s, transform 1s ease ${i * 0.18}s`;
+        setTimeout(() => { el.style.opacity = '1'; el.style.transform = 'none'; }, 50 + i * 180);
+      });
+    }, 600);
+  }
+
+})();
+</script>
+</body>
+</html>
