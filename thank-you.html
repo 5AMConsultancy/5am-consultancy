@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thank You — 5AM Consultancy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,700&display=swap" rel="stylesheet">
+
+<!-- ═══════════════════════════════════════════════════════════════
+     STEP 1 — GOOGLE ADS: Paste your Global Site Tag here.
+     Same tag as landing.html.
+     ═══════════════════════════════════════════════════════════════ -->
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     STEP 2 — GOOGLE ADS: Paste your Conversion Event snippet here.
+     This fires every time someone reaches this page, which is how
+     Google Ads counts a completed lead. You'll get this snippet
+     from: Google Ads → Goals → Conversions → your conversion action
+     → Tag setup → Install the tag yourself → Event snippet.
+     ═══════════════════════════════════════════════════════════════ -->
+
+
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg:        #080808;
+  --white:     #ffffff;
+  --light-gray:#d8d4cc;
+  --mid-gray:  #888888;
+  --border:    rgba(255,255,255,0.10);
+  --font:      'Fraunces', Georgia, 'Times New Roman', serif;
+}
+
+html, body { height: 100%; }
+body {
+  background: var(--bg); font-family: var(--font);
+  display: flex; flex-direction: column; overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+
+/* Nav */
+nav {
+  height: 60px; display: flex; align-items: center;
+  padding: 0 clamp(20px, 4vw, 64px);
+  border-bottom: 1px solid var(--border);
+  background: rgba(8,8,8,0.92); backdrop-filter: blur(14px);
+  flex-shrink: 0;
+}
+.nav-logo {
+  font-family: var(--font); font-weight: 700; font-size: 15px;
+  letter-spacing: 0.04em; color: var(--white);
+}
+.nav-logo em { font-weight: 300; font-style: italic; color: rgba(255,255,255,.45); }
+
+/* Main */
+main {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  padding: clamp(48px, 8vw, 100px) clamp(20px, 5vw, 72px);
+}
+.ty-inner { max-width: 640px; }
+
+.ty-eyebrow {
+  font-family: var(--font); font-weight: 300; font-size: 10px;
+  letter-spacing: 0.26em; text-transform: uppercase;
+  color: rgba(255,255,255,.28); margin-bottom: 28px;
+}
+.ty-heading {
+  font-family: var(--font); font-weight: 700;
+  font-size: clamp(2.6rem, 5.5vw, 5.5rem);
+  line-height: 0.96; letter-spacing: -0.025em; color: var(--white);
+  margin-bottom: 28px;
+}
+.ty-heading em { font-style: italic; font-weight: 300; color: rgba(255,255,255,.32); }
+.ty-body {
+  font-family: var(--font); font-weight: 300;
+  font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+  line-height: 1.78; color: var(--light-gray);
+  margin-bottom: 44px;
+}
+.ty-divider {
+  width: 40px; height: 1px; background: rgba(255,255,255,0.2);
+  margin-bottom: 44px;
+}
+.ty-links { display: flex; flex-wrap: wrap; gap: 14px; }
+.ty-link {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font); font-weight: 300; font-size: 12px;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--white);
+  border: 1px solid var(--border); padding: 13px 24px;
+  transition: border-color 0.2s, background 0.2s;
+}
+.ty-link:hover { border-color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.04); }
+.ty-link .arr { transition: transform 0.2s; display: inline-block; }
+.ty-link:hover .arr { transform: translateX(4px); }
+.ty-link-primary {
+  background: var(--white); color: var(--bg); border-color: var(--white);
+}
+.ty-link-primary:hover { background: #d8d4cc; border-color: #d8d4cc; }
+
+/* Footer */
+footer {
+  border-top: 1px solid var(--border); flex-shrink: 0;
+}
+.footer-bar {
+  max-width: 1320px; margin: 0 auto;
+  padding: clamp(22px, 3vw, 38px) clamp(20px, 5vw, 72px);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 16px;
+}
+.footer-copy {
+  font-family: var(--font); font-weight: 300; font-size: 10px;
+  letter-spacing: 0.08em; color: var(--mid-gray);
+}
+.footer-links { display: flex; gap: 24px; }
+.footer-links a {
+  font-family: var(--font); font-weight: 300; font-size: 10px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--mid-gray); transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--white); }
+
+/* Entrance animation */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(32px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.ty-eyebrow { animation: fadeUp 0.75s ease both 0.1s; }
+.ty-heading  { animation: fadeUp 0.95s ease both 0.25s; }
+.ty-body     { animation: fadeUp 0.85s ease both 0.45s; }
+.ty-divider  { animation: fadeUp 0.7s  ease both 0.55s; }
+.ty-links    { animation: fadeUp 0.8s  ease both 0.65s; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="https://5amconsultancy.com" class="nav-logo">5AM <em>Consultancy</em></a>
+</nav>
+
+<main>
+  <div class="ty-inner">
+    <p class="ty-eyebrow">Message received</p>
+    <h1 class="ty-heading">Thank you for<br><em>reaching out.</em></h1>
+    <p class="ty-body">We've got your message and we'll be in touch the same day. In the meantime, feel free to explore the site or reach us directly below.</p>
+    <div class="ty-divider"></div>
+    <div class="ty-links">
+      <a class="ty-link ty-link-primary" href="https://5amconsultancy.com">Back to 5AM <span class="arr">→</span></a>
+      <a class="ty-link" href="https://wa.me/27692975537" target="_blank" rel="noopener">WhatsApp us ↗</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-bar">
+    <p class="footer-copy">5AM Consultancy ©2026 — Knysna, South Africa</p>
+    <div class="footer-links">
+      <a href="mailto:alessandro@5amconsultancy.com">Email ↗</a>
+      <a href="https://wa.me/27692975537" target="_blank" rel="noopener">WhatsApp ↗</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
