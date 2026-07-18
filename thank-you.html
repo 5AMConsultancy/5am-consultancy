@@ -44,17 +44,18 @@ a { color: inherit; text-decoration: none; }
 
 /* Nav */
 nav {
-  height: 60px; display: flex; align-items: center;
+  height: 110px; display: flex; align-items: center;
   padding: 0 clamp(20px, 4vw, 64px);
   border-bottom: 1px solid var(--border);
   background: rgba(8,8,8,0.92); backdrop-filter: blur(14px);
   flex-shrink: 0;
 }
 .nav-logo {
-  font-family: var(--font); font-weight: 700; font-size: 15px;
-  letter-spacing: 0.04em; color: var(--white);
+  display: flex; align-items: center;
 }
-.nav-logo em { font-weight: 300; font-style: italic; color: rgba(255,255,255,.45); }
+.nav-logo img {
+  height: 96px; width: auto; display: block;
+}
 
 /* Main */
 main {
@@ -138,7 +139,7 @@ footer {
 <body>
 
 <nav>
-  <a href="https://5amconsultancy.com" class="nav-logo">5AM <em>Consultancy</em></a>
+  <a href="https://5amconsultancy.com" class="nav-logo"><img src="brand_assests/5AM-Consultancy-Wordmark-Transparent.png" alt="5AM Consultancy"></a>
 </nav>
 
 <main>
