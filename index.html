@@ -568,7 +568,22 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--amber); outline
 }
 .svc-list li::before { content: '—'; color: var(--amber); font-family: var(--serif); }
 @media (max-width: 860px) {
-  .svc-panel { grid-template-columns: 1fr; width: 86vw; }
+  .svc-panel {
+    grid-template-columns: 1fr; width: 90vw;
+    padding: 22px 22px 24px;
+  }
+  #services.pinned .svc-panel {
+    max-height: calc(var(--vh, 1vh) * 100 - 165px);
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
+  }
+  .svc-head .sec-label { margin-bottom: 14px; }
+  #services.pinned .svc-head { padding-bottom: 14px; }
+  .svc-title { font-size: clamp(1.55rem, 6.2vw, 2.15rem); margin-bottom: 10px; line-height: 1.05; }
+  .svc-num { margin-bottom: 10px; }
+  .svc-desc { margin-bottom: 16px; }
+  .svc-quote p { margin-bottom: 6px; }
+  .svc-list li { padding: 10px 2px; }
+  .svc-track { padding-bottom: 16px; }
 }
 @media (max-width: 480px) {
   .band-wrap.is-3d .band-card { padding: 26px 24px; }
