@@ -157,6 +157,7 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--amber); outline
 }
 
 #clock {
+  --clock-scale: 1;
   position: relative; background: var(--clock-body);
   border-radius: 12px; padding: 22px 26px 26px;
   box-shadow:
@@ -253,15 +254,15 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--amber); outline
   50%      { transform: rotate(45deg) translate(3px,3px); opacity:.9; }
 }
 @keyframes shake {
-  0%,100% { transform: translate(0,0) rotate(0deg); }
-  8%  { transform: translate(-8px,-2px) rotate(-2deg); }
-  18% { transform: translate(8px,3px) rotate(2deg); }
-  28% { transform: translate(-7px,2px) rotate(-1.4deg); }
-  38% { transform: translate(7px,-2px) rotate(1.4deg); }
-  50% { transform: translate(-5px,2px) rotate(-1deg); }
-  62% { transform: translate(5px,-2px) rotate(1deg); }
-  74% { transform: translate(-3px,1px) rotate(-.5deg); }
-  86% { transform: translate(3px,-1px) rotate(.5deg); }
+  0%,100% { transform: translate(0,0) rotate(0deg) scale(var(--clock-scale)); }
+  8%  { transform: translate(-8px,-2px) rotate(-2deg) scale(var(--clock-scale)); }
+  18% { transform: translate(8px,3px) rotate(2deg) scale(var(--clock-scale)); }
+  28% { transform: translate(-7px,2px) rotate(-1.4deg) scale(var(--clock-scale)); }
+  38% { transform: translate(7px,-2px) rotate(1.4deg) scale(var(--clock-scale)); }
+  50% { transform: translate(-5px,2px) rotate(-1deg) scale(var(--clock-scale)); }
+  62% { transform: translate(5px,-2px) rotate(1deg) scale(var(--clock-scale)); }
+  74% { transform: translate(-3px,1px) rotate(-.5deg) scale(var(--clock-scale)); }
+  86% { transform: translate(3px,-1px) rotate(.5deg) scale(var(--clock-scale)); }
 }
 
 #skip-intro {
@@ -273,7 +274,7 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--amber); outline
 }
 #skip-intro:hover { color: var(--ink); border-color: var(--amber-line); }
 @media (max-width: 620px) {
-  #clock { transform: scale(0.62); }
+  #clock { --clock-scale: 0.62; transform: scale(var(--clock-scale)); }
   #skip-intro { bottom: 24px; right: 20px; }
 }
 
@@ -480,7 +481,7 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--amber); outline
 ════════════════════════════════════════ */
 #services { border-top: 1px solid var(--line); }
 #services.pinned {
-  height: 100vh; display: flex; flex-direction: column;
+  height: 100vh; height: calc(var(--vh, 1vh) * 100); display: flex; flex-direction: column;
   justify-content: center; overflow: hidden;
 }
 .svc-head {
@@ -568,7 +569,9 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--amber); outline
 .svc-list li::before { content: '—'; color: var(--amber); font-family: var(--serif); }
 @media (max-width: 860px) {
   .svc-panel { grid-template-columns: 1fr; width: 86vw; }
-  .svc-meta { display: none !important; }
+}
+@media (max-width: 480px) {
+  .band-wrap.is-3d .band-card { padding: 26px 24px; }
 }
 
 /* ════════════════════════════════════════
@@ -576,7 +579,7 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--amber); outline
 ════════════════════════════════════════ */
 #method { border-top: 1px solid var(--line); }
 #method.pinned {
-  height: 100vh; display: flex; flex-direction: column;
+  height: 100vh; height: calc(var(--vh, 1vh) * 100); display: flex; flex-direction: column;
   justify-content: center; overflow: hidden;
 }
 .method-inner {
@@ -1296,6 +1299,13 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--amber); outline
   const fineHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   let revealed = false;
 
+  /* ════ mobile viewport-height fix (iOS/Android address-bar resize) ════ */
+  function setVH() { document.documentElement.style.setProperty('--vh', window.innerHeight * 0.01 + 'px'); }
+  setVH();
+  window.addEventListener('orientationchange', setVH);
+  let vhT;
+  window.addEventListener('resize', () => { clearTimeout(vhT); vhT = setTimeout(setVH, 200); }, { passive: true });
+
   /* ════ 0 · CHROME: cursor, grain, progress bar ════ */
   if (fineHover && !reduceMotion) {
     const cursor = $('cursor-dot');
@@ -1466,9 +1476,10 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--amber); outline
   function flyClock() {
     const clock = $('clock');
     const r = clock.getBoundingClientRect();
+    const naturalW = clock.offsetWidth; // untransformed intrinsic width — inline transform below replaces any CSS scale (e.g. mobile's 0.62), so the target size must be computed against the natural size, not the already-shrunk rendered size
     clock.style.cssText += `position:fixed;top:${r.top}px;left:${r.left}px;margin:0;z-index:950;transform-origin:top left;`;
     document.body.appendChild(clock);
-    const scale = 60 / r.width;
+    const scale = 60 / naturalW;
     requestAnimationFrame(() => {
       clock.style.transition = 'transform 1.05s cubic-bezier(0.4,0,0.15,1), opacity 0.55s ease 1.05s';
       clock.style.transform = `translate(${24 - r.left}px, ${14 - r.top}px) scale(${scale})`;
@@ -1497,11 +1508,19 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--amber); outline
 
     /* ── Particles ── */
     const canvas = $('hero-canvas'), ctx = canvas.getContext('2d');
-    let W, H, pts;
-    const N = 90, LINK = 175, SPD = 0.3;
+    let W, H, pts, N, LINK;
+    const SPD = 0.3;
+    function densityFor(w) {
+      if (w >= 861) return { n: 90, link: 175 }; // desktop — identical to the original, always
+      const scale = Math.max(0.35, w / 861);
+      return { n: Math.max(26, Math.round(90 * scale)), link: Math.max(78, Math.round(175 * scale)) };
+    }
     function resizeCv() {
       W = canvas.width = canvas.offsetWidth;
       H = canvas.height = canvas.offsetHeight;
+      const d = densityFor(W);
+      N = d.n; LINK = d.link;
+      makePts();
     }
     function makePts() {
       pts = Array.from({ length: N }, () => ({
@@ -1541,8 +1560,12 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--amber); outline
       });
       if (!reduceMotion) requestAnimationFrame(tick);
     }
-    resizeCv(); makePts(); tick();
-    window.addEventListener('resize', resizeCv, { passive: true });
+    resizeCv(); tick();
+    let resizeT;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeT);
+      resizeT = setTimeout(resizeCv, 150);
+    }, { passive: true });
 
     /* ── Mobile menu ── */
     const burger = $('burger'), menu = $('mobile-menu');
@@ -1637,6 +1660,7 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--amber); outline
 
     if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') { fallback(); return; }
     gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.config({ ignoreMobileResize: true });
 
     /* ── Hero entrance (word-split reveal) ── */
     const words = document.querySelectorAll('#hero-title .word-inner');
@@ -1698,7 +1722,7 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--amber); outline
 
     /* ── Premium effects (desktop, full motion only) ── */
     const mm = gsap.matchMedia();
-    mm.add('(min-width: 861px) and (prefers-reduced-motion: no-preference)', () => {
+    mm.add('(prefers-reduced-motion: no-preference)', () => {
 
       /* Sideways-scroll services */
       const services = $('services');
