@@ -6,7 +6,7 @@
 <title>Thank You — 5AM Consultancy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
 <!-- ═══════════════════════════════════════════════════════════════
      STEP 1 — GOOGLE ADS: Paste your Global Site Tag here.
@@ -27,102 +27,118 @@
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-  --bg:        #080808;
-  --white:     #ffffff;
-  --light-gray:#d8d4cc;
-  --mid-gray:  #888888;
-  --border:    rgba(255,255,255,0.10);
-  --font:      'Fraunces', Georgia, 'Times New Roman', serif;
+  --bg:          #070707;
+  --ink:         #f4f1ea;
+  --soft:        #d8d4cc;
+  --muted:       #98938a;
+  --line:        rgba(244,241,234,0.10);
+  --line-strong: rgba(244,241,234,0.35);
+
+  --amber:       #f0a45c;
+  --amber-deep:  #d6785a;
+  --amber-line:  rgba(240,164,92,0.45);
+
+  --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --sans:  'Instrument Sans', system-ui, -apple-system, sans-serif;
 }
 
 html, body { height: 100%; }
 body {
-  background: var(--bg); font-family: var(--font);
+  background: var(--bg); font-family: var(--serif); color: var(--ink);
   display: flex; flex-direction: column; overflow-x: hidden;
 }
 a { color: inherit; text-decoration: none; }
 
 /* Nav */
 nav {
-  height: 110px; display: flex; align-items: center;
-  padding: 0 clamp(20px, 4vw, 64px);
-  border-bottom: 1px solid var(--border);
-  background: rgba(8,8,8,0.92); backdrop-filter: blur(14px);
+  height: 104px; display: flex; align-items: center;
+  padding: 0 clamp(20px, 4vw, 56px);
+  border-bottom: 1px solid var(--line);
+  background: rgba(7,7,7,0.86); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
   flex-shrink: 0;
 }
-.nav-logo {
-  display: flex; align-items: center;
-}
-.nav-logo img {
-  height: 96px; width: auto; display: block;
-}
+.nav-logo { display: flex; align-items: center; }
+.nav-logo img { height: 86px; width: auto; display: block; }
 
 /* Main */
 main {
   flex: 1; display: flex; align-items: center; justify-content: center;
   padding: clamp(48px, 8vw, 100px) clamp(20px, 5vw, 72px);
+  position: relative; overflow: hidden;
 }
-.ty-inner { max-width: 640px; }
+main::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 120% 70% at 50% 118%, rgba(240,164,92,0.16), rgba(214,120,90,0.06) 40%, transparent 70%);
+}
+.ty-inner { max-width: 640px; position: relative; z-index: 1; }
 
 .ty-eyebrow {
-  font-family: var(--font); font-weight: 300; font-size: 10px;
-  letter-spacing: 0.26em; text-transform: uppercase;
-  color: rgba(255,255,255,.28); margin-bottom: 28px;
+  font-family: var(--sans); font-weight: 500; font-size: 11px;
+  letter-spacing: 0.24em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 28px;
 }
 .ty-heading {
-  font-family: var(--font); font-weight: 700;
+  font-family: var(--serif); font-weight: 600;
   font-size: clamp(2.6rem, 5.5vw, 5.5rem);
-  line-height: 0.96; letter-spacing: -0.025em; color: var(--white);
+  line-height: 0.96; letter-spacing: -0.025em; color: var(--ink);
   margin-bottom: 28px;
 }
-.ty-heading em { font-style: italic; font-weight: 300; color: rgba(255,255,255,.32); }
+.ty-heading em {
+  font-style: italic; font-weight: 300;
+  background: linear-gradient(100deg, var(--amber) 20%, var(--amber-deep) 80%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
 .ty-body {
-  font-family: var(--font); font-weight: 300;
+  font-family: var(--serif); font-weight: 300;
   font-size: clamp(0.95rem, 1.3vw, 1.1rem);
-  line-height: 1.78; color: var(--light-gray);
+  line-height: 1.78; color: var(--soft);
   margin-bottom: 44px;
 }
 .ty-divider {
-  width: 40px; height: 1px; background: rgba(255,255,255,0.2);
+  width: 40px; height: 1px; background: var(--amber-line);
   margin-bottom: 44px;
 }
 .ty-links { display: flex; flex-wrap: wrap; gap: 14px; }
-.ty-link {
+.btn {
   display: inline-flex; align-items: center; gap: 10px;
-  font-family: var(--font); font-weight: 300; font-size: 12px;
-  letter-spacing: 0.12em; text-transform: uppercase; color: var(--white);
-  border: 1px solid var(--border); padding: 13px 24px;
-  transition: border-color 0.2s, background 0.2s;
+  font-family: var(--sans); font-weight: 600; font-size: 12px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 14px 28px; border-radius: 2px;
+  transition: filter .2s, border-color .2s, background .2s, color .2s;
 }
-.ty-link:hover { border-color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.04); }
-.ty-link .arr { transition: transform 0.2s; display: inline-block; }
-.ty-link:hover .arr { transform: translateX(4px); }
-.ty-link-primary {
-  background: var(--white); color: var(--bg); border-color: var(--white);
-}
-.ty-link-primary:hover { background: #d8d4cc; border-color: #d8d4cc; }
+.btn .arr { transition: transform 0.2s; display: inline-block; }
+.btn:hover .arr { transform: translateX(4px); }
+.btn-amber { background: linear-gradient(120deg, var(--amber), var(--amber-deep)); color: #131313; }
+.btn-amber:hover { filter: brightness(1.1); }
+.btn-ghost { border: 1px solid var(--line-strong); color: var(--ink); font-weight: 500; }
+.btn-ghost:hover { border-color: var(--amber-line); color: var(--amber); }
 
 /* Footer */
-footer {
-  border-top: 1px solid var(--border); flex-shrink: 0;
-}
+footer { border-top: 1px solid var(--line); flex-shrink: 0; }
 .footer-bar {
   max-width: 1320px; margin: 0 auto;
-  padding: clamp(22px, 3vw, 38px) clamp(20px, 5vw, 72px);
+  padding: clamp(24px, 3.5vw, 40px) clamp(20px, 5vw, 72px);
   display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: 16px;
+  flex-wrap: wrap; gap: 18px;
 }
+.footer-left { display: flex; align-items: center; gap: 12px; }
+.status-dot { position: relative; width: 7px; height: 7px; border-radius: 50%; background: var(--amber); flex-shrink: 0; }
+.status-dot::after {
+  content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 1px solid var(--amber-line);
+  animation: pulse 2.2s ease-out infinite;
+}
+@keyframes pulse { 0% { transform: scale(0.6); opacity: 1; } 100% { transform: scale(1.8); opacity: 0; } }
 .footer-copy {
-  font-family: var(--font); font-weight: 300; font-size: 10px;
-  letter-spacing: 0.08em; color: var(--mid-gray);
+  font-family: var(--sans); font-weight: 400; font-size: 11px;
+  letter-spacing: 0.08em; color: var(--muted);
 }
 .footer-links { display: flex; gap: 24px; }
 .footer-links a {
-  font-family: var(--font); font-weight: 300; font-size: 10px;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--mid-gray); transition: color 0.2s;
+  font-family: var(--sans); font-weight: 500; font-size: 10px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted); transition: color 0.2s;
 }
-.footer-links a:hover { color: var(--white); }
+.footer-links a:hover { color: var(--amber); }
 
 /* Entrance animation */
 @keyframes fadeUp {
@@ -149,15 +165,18 @@ footer {
     <p class="ty-body">We've got your message and we'll be in touch the same day. In the meantime, feel free to explore the site or reach us directly below.</p>
     <div class="ty-divider"></div>
     <div class="ty-links">
-      <a class="ty-link ty-link-primary" href="https://5amconsultancy.com">Back to 5AM <span class="arr">→</span></a>
-      <a class="ty-link" href="https://wa.me/27692975537" target="_blank" rel="noopener">WhatsApp us ↗</a>
+      <a class="btn btn-amber" href="https://5amconsultancy.com">Back to 5AM <span class="arr">→</span></a>
+      <a class="btn btn-ghost" href="https://wa.me/27692975537" target="_blank" rel="noopener">WhatsApp us ↗</a>
     </div>
   </div>
 </main>
 
 <footer>
   <div class="footer-bar">
-    <p class="footer-copy">5AM Consultancy ©2026 — Knysna, South Africa</p>
+    <div class="footer-left">
+      <span class="status-dot" aria-hidden="true"></span>
+      <p class="footer-copy">5AM Consultancy ©2026 — Knysna, South Africa</p>
+    </div>
     <div class="footer-links">
       <a href="mailto:alessandro@5amconsultancy.com">Email ↗</a>
       <a href="https://wa.me/27692975537" target="_blank" rel="noopener">WhatsApp ↗</a>

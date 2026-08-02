@@ -6,7 +6,7 @@
 <title>Get in Touch — 5AM Consultancy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
@@ -22,23 +22,32 @@
 html { scroll-behavior: auto; }
 
 :root {
-  --bg:          #080808;
+  --bg:          #070707;
   --clock-body:  #243360;
   --clock-inner: #14203f;
   --card-top:    #72788c;
   --card-bot:    #62687c;
   --card-tab:    #555c6e;
-  --digit:       #f0f0f4;
+  --digit:       #f4f1ea;
   --card-h:      96px;
   --half-h:      48px;
-  --white:       #ffffff;
-  --light-gray:  #d8d4cc;
-  --mid-gray:    #888888;
-  --border:      rgba(255,255,255,0.10);
-  --font:        'Fraunces', Georgia, 'Times New Roman', serif;
+
+  --ink:         #f4f1ea;
+  --soft:        #d8d4cc;
+  --muted:       #98938a;
+  --line:        rgba(244,241,234,0.10);
+  --line-strong: rgba(244,241,234,0.35);
+
+  --amber:       #f0a45c;
+  --amber-deep:  #d6785a;
+  --amber-soft:  rgba(240,164,92,0.16);
+  --amber-line:  rgba(240,164,92,0.45);
+
+  --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --sans:  'Instrument Sans', system-ui, -apple-system, sans-serif;
 }
 
-body { background: var(--bg); overflow-x: hidden; font-family: var(--font); }
+body { background: var(--bg); overflow-x: hidden; font-family: var(--serif); }
 a { color: inherit; text-decoration: none; }
 
 /* ════════════════════════════════════════
@@ -97,7 +106,7 @@ a { color: inherit; text-decoration: none; }
 .fc-n {
   width: 100%; height: 96px;
   display: flex; align-items: center; justify-content: center;
-  font-family: var(--font); font-size: 60px; font-weight: 700;
+  font-family: var(--serif); font-size: 60px; font-weight: 700;
   color: var(--digit); line-height: 1;
   user-select: none; pointer-events: none; letter-spacing: -1px;
   font-variant-numeric: tabular-nums;
@@ -124,10 +133,10 @@ a { color: inherit; text-decoration: none; }
 }
 
 .colon { display: flex; flex-direction: column; gap: 14px; padding-bottom: 2px; }
-.colon-dot { width: 7px; height: 7px; background: rgba(240,240,244,.45); border-radius: 50%; }
+.colon-dot { width: 7px; height: 7px; background: rgba(244,241,234,.45); border-radius: 50%; }
 
 .am-badge {
-  font-family: var(--font); font-size: 22px; font-weight: 700;
+  font-family: var(--serif); font-size: 22px; font-weight: 700;
   color: var(--digit); letter-spacing: 2px; opacity: .7;
   margin-left: 2px; align-self: center; padding-bottom: 2px;
 }
@@ -135,14 +144,14 @@ a { color: inherit; text-decoration: none; }
 #scroll-hint {
   position: absolute; bottom: 38px;
   display: flex; flex-direction: column; align-items: center; gap: 9px;
-  color: rgba(255,255,255,.5); font-size: 9px; letter-spacing: 5px;
-  font-family: var(--font); font-weight: 300; text-transform: uppercase;
+  color: rgba(244,241,234,.5); font-size: 9px; letter-spacing: 5px;
+  font-family: var(--sans); font-weight: 400; text-transform: uppercase;
   transition: opacity .7s ease;
 }
 .hint-arr {
   width: 15px; height: 15px;
-  border-right: 1.5px solid rgba(255,255,255,.5);
-  border-bottom: 1.5px solid rgba(255,255,255,.5);
+  border-right: 1.5px solid rgba(244,241,234,.5);
+  border-bottom: 1.5px solid rgba(244,241,234,.5);
   transform: rotate(45deg); animation: bounce 1.6s ease-in-out infinite;
 }
 @keyframes bounce {
@@ -177,17 +186,13 @@ a { color: inherit; text-decoration: none; }
 /* Nav */
 #nav {
   position: sticky; top: 0; z-index: 100;
-  height: 110px; display: flex; align-items: center; justify-content: space-between;
-  padding: 0 clamp(20px, 4vw, 64px);
-  border-bottom: 1px solid var(--border);
-  background: rgba(8,8,8,0.92); backdrop-filter: blur(14px);
+  height: 104px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 clamp(20px, 4vw, 56px);
+  border-bottom: 1px solid var(--line);
+  background: rgba(7,7,7,0.86); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
 }
-.nav-logo {
-  display: flex; align-items: center;
-}
-.nav-logo img {
-  height: 96px; width: auto; display: block;
-}
+.nav-logo { display: flex; align-items: center; }
+.nav-logo img { height: 86px; width: auto; display: block; }
 
 /* Landing grid */
 .land-grid {
@@ -203,46 +208,50 @@ a { color: inherit; text-decoration: none; }
 
 /* Pitch */
 .land-eyebrow {
-  font-family: var(--font); font-weight: 300; font-size: 10px;
-  letter-spacing: 0.26em; text-transform: uppercase;
-  color: rgba(255,255,255,.28); margin-bottom: 28px;
+  font-family: var(--sans); font-weight: 500; font-size: 11px;
+  letter-spacing: 0.24em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 28px;
 }
 .land-heading {
-  font-family: var(--font); font-weight: 700;
+  font-family: var(--serif); font-weight: 600;
   font-size: clamp(2.4rem, 4.5vw, 5rem);
-  line-height: 0.96; letter-spacing: -0.025em; color: var(--white);
+  line-height: 0.96; letter-spacing: -0.025em; color: var(--ink);
   margin-bottom: 28px;
 }
-.land-heading em { font-style: italic; font-weight: 300; color: rgba(255,255,255,.32); }
+.land-heading em {
+  font-style: italic; font-weight: 300;
+  background: linear-gradient(100deg, var(--amber) 20%, var(--amber-deep) 80%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
 .land-body {
-  font-family: var(--font); font-weight: 300;
+  font-family: var(--serif); font-weight: 300;
   font-size: clamp(0.9rem, 1.15vw, 1.05rem);
-  line-height: 1.78; color: var(--light-gray);
+  line-height: 1.78; color: var(--soft);
   margin-bottom: 40px; max-width: 460px;
 }
-.land-services { border-top: 1px solid var(--border); }
+.land-services { border-top: 1px solid var(--line); }
 .land-svc {
   display: flex; align-items: center; gap: 18px;
-  border-bottom: 1px solid var(--border); padding: 14px 0;
+  border-bottom: 1px solid var(--line); padding: 14px 0;
 }
 .land-svc-num {
-  font-family: var(--font); font-weight: 300; font-size: 10px;
-  letter-spacing: 0.1em; color: var(--mid-gray); min-width: 22px;
+  font-family: var(--sans); font-weight: 600; font-size: 11px;
+  letter-spacing: 0.1em; color: var(--amber); min-width: 22px;
 }
 .land-svc-name {
-  font-family: var(--font); font-weight: 300;
-  font-size: clamp(0.85rem, 1.05vw, 0.95rem); color: var(--light-gray);
+  font-family: var(--serif); font-weight: 300;
+  font-size: clamp(0.85rem, 1.05vw, 0.95rem); color: var(--soft);
 }
 
 /* Form card */
 .form-card {
-  background: rgba(255,255,255,0.025);
-  border: 1px solid var(--border);
+  background: rgba(244,241,234,0.025);
+  border: 1px solid var(--line);
   padding: clamp(28px, 3.5vw, 44px);
 }
 .form-card-title {
-  font-family: var(--font); font-weight: 700; font-size: 1.05rem;
-  color: var(--white); margin-bottom: 26px; letter-spacing: -0.01em;
+  font-family: var(--serif); font-weight: 600; font-size: 1.05rem;
+  color: var(--ink); margin-bottom: 26px; letter-spacing: -0.01em;
 }
 
 /* Fields */
@@ -254,60 +263,77 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 480px) { .field-row { grid-template-columns: 1fr; } }
 
 .field-label {
-  display: block; font-family: var(--font); font-weight: 400; font-size: 10px;
+  display: block; font-family: var(--sans); font-weight: 500; font-size: 10px;
   letter-spacing: 0.16em; text-transform: uppercase;
-  color: var(--mid-gray); margin-bottom: 9px;
+  color: var(--muted); margin-bottom: 9px;
 }
 .field-opt {
-  font-family: var(--font); font-weight: 300; font-style: italic;
-  text-transform: none; letter-spacing: 0; font-size: 9px; opacity: 0.55;
+  font-family: var(--serif); font-weight: 300; font-style: italic;
+  text-transform: none; letter-spacing: 0; font-size: 9px; opacity: 0.65;
 }
 .field-input {
-  width: 100%; background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.12); color: var(--white);
-  font-family: var(--font); font-weight: 300; font-size: 0.92rem;
+  width: 100%; background: rgba(244,241,234,0.04);
+  border: 1px solid rgba(244,241,234,0.14); color: var(--ink);
+  font-family: var(--serif); font-weight: 300; font-size: 0.92rem;
   padding: 13px 14px; outline: none;
   transition: border-color 0.2s, background 0.2s;
   -webkit-appearance: none; border-radius: 0;
 }
 .field-input:focus {
-  border-color: rgba(255,255,255,0.38);
-  background: rgba(255,255,255,0.06);
+  border-color: var(--amber-line);
+  background: rgba(244,241,234,0.06);
 }
-.field-input::placeholder { color: rgba(255,255,255,0.18); font-style: italic; }
+.field-input::placeholder { color: rgba(244,241,234,0.22); font-style: italic; }
 .field-textarea { min-height: 118px; resize: vertical; }
 
-.form-submit {
-  font-family: var(--font); font-weight: 400; font-size: 13px;
-  letter-spacing: 0.08em; color: var(--bg);
-  background: var(--white); border: none;
-  padding: 14px 30px; cursor: pointer;
+.btn {
   display: inline-flex; align-items: center; gap: 10px;
-  transition: background 0.2s; margin-top: 4px;
+  font-family: var(--sans); font-weight: 600; font-size: 12px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 14px 28px; border-radius: 2px; border: none; cursor: pointer;
+  transition: filter .2s, border-color .2s, background .2s, color .2s;
+  margin-top: 4px;
 }
-.form-submit:hover { background: var(--light-gray); }
-.form-submit .arr { transition: transform 0.2s; display: inline-block; }
-.form-submit:hover .arr { transform: translateX(4px); }
+.btn-amber { background: linear-gradient(120deg, var(--amber), var(--amber-deep)); color: #131313; }
+.btn-amber:hover { filter: brightness(1.1); }
+.btn-amber:disabled { opacity: 0.6; cursor: default; filter: none; }
+.btn .arr { transition: transform 0.2s; display: inline-block; }
+.btn:hover .arr { transform: translateX(4px); }
+
+.form-error {
+  display: none; margin-top: 16px;
+  font-family: var(--sans); font-weight: 400; font-size: 12px;
+  letter-spacing: 0.02em; line-height: 1.6; color: var(--amber-deep);
+}
+.form-error a { color: var(--soft); border-bottom: 1px solid var(--line); }
+.form-error.visible { display: block; }
 
 /* Footer */
 .footer-bar {
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--line);
   max-width: 1320px; margin: 0 auto;
-  padding: clamp(22px, 3vw, 38px) clamp(20px, 5vw, 72px);
+  padding: clamp(24px, 3.5vw, 40px) clamp(20px, 5vw, 72px);
   display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: 16px;
+  flex-wrap: wrap; gap: 18px;
 }
+.footer-left { display: flex; align-items: center; gap: 12px; }
+.status-dot { position: relative; width: 7px; height: 7px; border-radius: 50%; background: var(--amber); flex-shrink: 0; }
+.status-dot::after {
+  content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 1px solid var(--amber-line);
+  animation: pulse 2.2s ease-out infinite;
+}
+@keyframes pulse { 0% { transform: scale(0.6); opacity: 1; } 100% { transform: scale(1.8); opacity: 0; } }
 .footer-copy {
-  font-family: var(--font); font-weight: 300; font-size: 10px;
-  letter-spacing: 0.08em; color: var(--mid-gray);
+  font-family: var(--sans); font-weight: 400; font-size: 11px;
+  letter-spacing: 0.08em; color: var(--muted);
 }
 .footer-links { display: flex; gap: 24px; }
 .footer-links a {
-  font-family: var(--font); font-weight: 300; font-size: 10px;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--mid-gray); transition: color 0.2s;
+  font-family: var(--sans); font-weight: 500; font-size: 10px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted); transition: color 0.2s;
 }
-.footer-links a:hover { color: var(--white); }
+.footer-links a:hover { color: var(--amber); }
 @media (max-width: 600px) { .footer-bar { flex-direction: column; align-items: flex-start; } }
 </style>
 </head>
@@ -373,9 +399,9 @@ a { color: inherit; text-decoration: none; }
 
     <!-- Left: Pitch -->
     <div id="land-pitch">
-      <p class="land-eyebrow">Website Design · Brand Scaling · Ad Creation</p>
+      <p class="land-eyebrow">Website Design · Brand Scaling · Ad Creation · Videography &amp; Photography · Business Solutions</p>
       <h1 class="land-heading">Ready to grow?<br><em>Let's talk.</em></h1>
-      <p class="land-body">We build fast websites, scale ambitious brands, and create ads that actually convert. Tell us about your business — we reply the same day.</p>
+      <p class="land-body">We build fast websites, scale ambitious brands, and create ads that actually convert. We also handle videography and photography to tell your story properly, and put business solutions in place to help your operations run smoother behind the scenes. Tell us about your business — let's see how we can help.</p>
       <div class="land-services">
         <div class="land-svc">
           <span class="land-svc-num">01</span>
@@ -388,6 +414,14 @@ a { color: inherit; text-decoration: none; }
         <div class="land-svc">
           <span class="land-svc-num">03</span>
           <span class="land-svc-name">Ad Creation</span>
+        </div>
+        <div class="land-svc">
+          <span class="land-svc-num">04</span>
+          <span class="land-svc-name">Videography &amp; Photography</span>
+        </div>
+        <div class="land-svc">
+          <span class="land-svc-num">05</span>
+          <span class="land-svc-name">Business Solutions</span>
         </div>
       </div>
     </div>
@@ -427,7 +461,8 @@ a { color: inherit; text-decoration: none; }
             <textarea id="message" name="message" class="field-input field-textarea" placeholder="What do you do, what are you hoping to achieve?" required></textarea>
           </div>
 
-          <button type="submit" class="form-submit">Send Message <span class="arr">→</span></button>
+          <button type="submit" class="btn btn-amber">Send Message <span class="arr">→</span></button>
+          <p class="form-error" id="form-error">Something went wrong sending your message. Please try again, or email us directly at <a href="mailto:alessandro@5amconsultancy.com">alessandro@5amconsultancy.com</a>.</p>
         </form>
       </div>
     </div>
@@ -436,7 +471,10 @@ a { color: inherit; text-decoration: none; }
 
   <footer>
     <div class="footer-bar">
-      <p class="footer-copy">5AM Consultancy ©2026 — Knysna, South Africa</p>
+      <div class="footer-left">
+        <span class="status-dot" aria-hidden="true"></span>
+        <p class="footer-copy">5AM Consultancy ©2026 — Knysna, South Africa</p>
+      </div>
       <div class="footer-links">
         <a href="mailto:alessandro@5amconsultancy.com">Email ↗</a>
         <a href="https://wa.me/27692975537" target="_blank" rel="noopener">WhatsApp ↗</a>
@@ -610,6 +648,34 @@ a { color: inherit; text-decoration: none; }
       .to('#land-pitch', { opacity: 1, y: 0, duration: 0.95, ease: 'power3.out' })
       .to('#land-form',  { opacity: 1, y: 0, duration: 0.95, ease: 'power3.out' }, '-=0.55');
   }
+
+  /* ════ FORM SUBMIT — stay on our own thank-you page ════ */
+  const form = $('contact-form');
+  const errorEl = $('form-error');
+  const submitBtn = form.querySelector('.btn-amber');
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    errorEl.classList.remove('visible');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = 'Sending… <span class="arr">→</span>';
+
+    fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' }
+    }).then(response => {
+      if (response.ok) {
+        window.location.href = 'thank-you.html';
+      } else {
+        throw new Error('submit failed');
+      }
+    }).catch(() => {
+      errorEl.classList.add('visible');
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = 'Send Message <span class="arr">→</span>';
+    });
+  });
 
 })();
 </script>
