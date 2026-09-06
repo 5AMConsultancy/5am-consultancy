@@ -812,6 +812,50 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--amber); outline
 .work-slot-title em { font-style: italic; font-weight: 300; color: var(--amber); }
 @media (max-width: 860px) { .work-grid { grid-template-columns: 1fr; } }
 
+/* ── Work: published case ── */
+.work-case {
+  grid-column: 1 / -1;
+  display: grid; grid-template-columns: 1.15fr 1fr;
+  gap: clamp(20px, 3vw, 40px); align-items: center;
+  border: 1px solid var(--amber-line); border-radius: 4px;
+  padding: clamp(16px, 1.8vw, 22px);
+  background: linear-gradient(140deg, rgba(240,164,92,0.07), transparent 62%);
+}
+.work-case-media {
+  position: relative; overflow: hidden; border-radius: 3px;
+  border: 1px solid rgba(244,241,234,0.09); background: #050506;
+  aspect-ratio: 960 / 600;
+}
+.work-case-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.work-case-media::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  box-shadow: inset 0 0 60px rgba(0,0,0,0.5);
+}
+.work-case-copy { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.work-case-tag {
+  font-family: var(--sans); font-weight: 600; font-size: 10px; letter-spacing: 0.2em;
+  color: var(--amber); text-transform: uppercase;
+}
+.work-case-title {
+  font-family: var(--serif); font-weight: 600; line-height: 1.05; letter-spacing: -0.02em;
+  font-size: clamp(1.6rem, 2.6vw, 2.2rem); color: var(--ink);
+}
+.work-case-desc {
+  font-family: var(--sans); font-weight: 300; font-size: clamp(0.86rem, 1.1vw, 0.95rem);
+  line-height: 1.6; color: var(--muted); max-width: 46ch;
+}
+.work-case-meta {
+  display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0; margin: 2px 0 4px;
+}
+.work-case-meta li {
+  font-family: var(--sans); font-weight: 500; font-size: 10px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--muted);
+  border: 1px solid var(--line); border-radius: 999px; padding: 5px 10px;
+}
+@media (max-width: 860px) {
+  .work-case { grid-template-columns: 1fr; }
+}
+
 /* ── Contact ── */
 #contact { position: relative; overflow: hidden; }
 #contact::before {
@@ -1254,6 +1298,32 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--amber); outline
       <h2 class="sec-heading" id="work-heading">Work</h2>
       <p class="work-note" id="work-note">We build for founders ready to grow — the first slots are open.</p>
       <div class="work-grid" id="work-grid">
+
+        <article class="work-case">
+          <div class="work-case-media">
+            <picture>
+              <!-- Visitors who ask for reduced motion get the still frame. -->
+              <source srcset="work/halden-poster.webp" media="(prefers-reduced-motion: reduce)">
+              <img src="work/halden-scroll.webp"
+                   alt="Scrolling through the HALDEN site: a 3D product render turning as the page scrolls, an animated frequency-response plot, and a live product configurator."
+                   width="960" height="600" loading="lazy" decoding="async">
+            </picture>
+          </div>
+          <div class="work-case-copy">
+            <span class="work-case-tag">Concept build · Self-initiated</span>
+            <h3 class="work-case-title">HALDEN</h3>
+            <p class="work-case-desc">A complete storefront for an audio brand we invented, built to show what we do end to end with nothing held back. Every product image is drawn live in the browser &mdash; there is no photography in it anywhere.</p>
+            <ul class="work-case-meta">
+              <li>Web design</li>
+              <li>Front-end build</li>
+              <li>Motion</li>
+              <li>Brand</li>
+              <li>Copywriting</li>
+            </ul>
+            <a class="btn btn-ghost" href="https://halden-5amconsultancy-com.vercel.app" target="_blank" rel="noopener">View the live build &rarr;</a>
+          </div>
+        </article>
+
         <div class="work-slot">
           <span class="work-slot-tag">Slot 01 · Open</span>
           <div><div class="shimmer-bar w80"></div></div>
@@ -1334,10 +1404,10 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--amber); outline
       requestAnimationFrame(tickCursor);
     })();
     document.addEventListener('mouseover', e => {
-      if (e.target.closest('a, button, .svc-panel, .band-card, .pillar-card, .work-slot')) cursor.classList.add('hovering');
+      if (e.target.closest('a, button, .svc-panel, .band-card, .pillar-card, .work-slot, .work-case')) cursor.classList.add('hovering');
     });
     document.addEventListener('mouseout', e => {
-      if (e.target.closest('a, button, .svc-panel, .band-card, .pillar-card, .work-slot')) cursor.classList.remove('hovering');
+      if (e.target.closest('a, button, .svc-panel, .band-card, .pillar-card, .work-slot, .work-case')) cursor.classList.remove('hovering');
     });
   }
 
@@ -1730,7 +1800,7 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--amber); outline
     rv('#founder-card', { y: 40 });
     rv('#work-heading', { y: 36 });
     rv('#work-note', { y: 20, delay: 0.1 });
-    rvBatch(document.querySelectorAll('#work-grid .work-slot'), { y: 30, stagger: 0.08, trigger: $('work-grid') });
+    rvBatch(document.querySelectorAll('#work-grid .work-case, #work-grid .work-slot'), { y: 30, stagger: 0.08, trigger: $('work-grid') });
     rv('#cta-heading', { y: 50, dur: 1.1 });
     rv('#cta-body', { y: 30, delay: 0.15 });
     rv('#cta-links', { y: 24, delay: 0.28 });
@@ -1825,7 +1895,7 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--amber); outline
       '#method-heading', ...document.querySelectorAll('.band-card'),
       ...document.querySelectorAll('.pillar-card'),
       '#founder-heading','#founder-card',
-      '#work-heading','#work-note', ...document.querySelectorAll('.work-slot'),
+      '#work-heading','#work-note', ...document.querySelectorAll('.work-case, .work-slot'),
       '#cta-heading','#cta-body','#cta-links','#cta-line','#footer-bar'
     ].forEach(el => {
       const node = typeof el === 'string' ? document.querySelector(el) : el;
